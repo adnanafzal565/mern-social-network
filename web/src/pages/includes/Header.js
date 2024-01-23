@@ -10,6 +10,8 @@ import "../../public/wysiwyg/css/plugins/image.min.css"
 import "../../public/wysiwyg/css/plugins/video.min.css"
 import "../../public/video-js/video-js.min.css"
 import "../../public/wavesurfer/videojs.wavesurfer.min.css"
+import "../../public/js/popper.min.js"
+import "../../public/js/bootstrap.min.js"
 import "../../public/js/owl.carousel.min.js"
 
 import { Link, useNavigate } from "react-router-dom"

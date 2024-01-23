@@ -2397,15 +2397,15 @@ http.listen(port, function () {
 				return false;
 			}
 
-			if (story.attachment != "") {
-				fileSystem.unlink(story.attachment, function (error) {
-					console.log("Story attachment has been deleted: " + error);
-				});
-			}
+			// if (story.attachment != "" && (await fileSystem.existsSync(story.attachment))) {
+			// 	fileSystem.unlink(story.attachment, function (error) {
+			// 		console.log("Story attachment has been deleted: " + error);
+			// 	});
+			// }
 
-			await database.collection("stories").deleteOne({
-	            "_id": story._id
-	        });
+			// await database.collection("stories").deleteOne({
+	        //     "_id": story._id
+	        // });
 
 			result.json({
 				"status": "success",
@@ -2425,6 +2425,14 @@ http.listen(port, function () {
 				result.json({
 					"status": "error",
 					"message": "User has been logged out. Please login again."
+				});
+				return false;
+			}
+
+			if (!ObjectId.isValid(_id)) {
+				result.json({
+					"status": "error",
+					"message": "Invalid ID."
 				});
 				return false;
 			}

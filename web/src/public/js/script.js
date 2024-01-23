@@ -1,6 +1,17 @@
 import jQuery from "jquery"
 import NProgress from "nprogress"
 
+function urlify(text) {
+	var urlRegex = /(https?:\/\/[^\s]+)/g;
+	return text.replace(urlRegex, function(url) {
+		return '<a href="' + url + '">' + url + '</a>';
+	})
+	// or alternatively
+	// return text.replace(urlRegex, '<a href="$1">$1</a>')
+}
+
+export { urlify }
+
 function readMore(self) {
 	const parent = self.parentElement
 
@@ -62,6 +73,8 @@ function getTimePassed(timestamp) {
 
 	return "";
 }
+
+export { getTimePassed }
 
 function getProfileImage(user) {
 	if (user.profileImage == "") {

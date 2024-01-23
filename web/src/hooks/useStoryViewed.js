@@ -1,13 +1,13 @@
 import axios from "axios"
 import constants from "../constants/constants"
 
-function useAddStory () {
+function useStoryViewed () {
 	const { api } = constants()
 	
-	async function addStory (formData) {
+	async function storyViewed (formData) {
 		try {
 			let response = await axios.post(
-				api + "/addStory",
+				api + "/storyViewed",
 				formData
 			)
 			response = response.data
@@ -18,7 +18,7 @@ function useAddStory () {
 		}
 	}
 
-	return { addStory }
+	return { storyViewed }
 }
 
-export default useAddStory
+export default useStoryViewed

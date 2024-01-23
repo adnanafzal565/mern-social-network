@@ -1,13 +1,13 @@
 import axios from "axios"
 import constants from "../constants/constants"
 
-function useAddStory () {
+function useDeleteStory () {
 	const { api } = constants()
 	
-	async function addStory (formData) {
+	async function deleteStory (formData) {
 		try {
 			let response = await axios.post(
-				api + "/addStory",
+				api + "/deleteStory",
 				formData
 			)
 			response = response.data
@@ -18,7 +18,7 @@ function useAddStory () {
 		}
 	}
 
-	return { addStory }
+	return { deleteStory }
 }
 
-export default useAddStory
+export default useDeleteStory
