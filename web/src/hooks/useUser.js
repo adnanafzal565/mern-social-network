@@ -1,13 +1,13 @@
 import axios from "axios"
 import constants from "../constants/constants"
 
-function useSignup () {
+function useUser () {
 	const { api } = constants()
 	
-	async function signup (formData) {
+	async function fetchUserWithNewsfeed (formData) {
 		try {
 			let response = await axios.post(
-				api + "/signup",
+				api + "/fetchUserWithNewsfeed",
 				formData
 			)
 			response = response.data
@@ -18,7 +18,7 @@ function useSignup () {
 		}
 	}
 
-	return { signup }
+	return { fetchUserWithNewsfeed }
 }
 
-export default useSignup
+export default useUser

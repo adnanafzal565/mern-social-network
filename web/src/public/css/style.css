@@ -160,7 +160,7 @@
     cursor: pointer;
 }
 .delete-post {
-    margin-left: 10px;
+/*    margin-left: 0px;*/
 }
 .edit-post:hover {
     color: orange;

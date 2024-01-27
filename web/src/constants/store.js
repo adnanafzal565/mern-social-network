@@ -1,10 +1,34 @@
 import { createStore } from "redux"
 
 const initialState = {
-	user: null
+	user: null,
+	likers: [],
+	dislikers: [],
+	postComments: []
 }
 
 const reducer = function (state = initialState, action) {
+	if (action.type == "updatePostComments") {
+		return {
+			...state,
+			postComments: action.postComments
+		}
+	}
+
+	if (action.type == "updateDisLikers") {
+		return {
+			...state,
+			dislikers: action.dislikers
+		}
+	}
+
+	if (action.type == "updateLikers") {
+		return {
+			...state,
+			likers: action.likers
+		}
+	}
+
 	if (action.type == "updateUser") {
 		return {
 			...state,

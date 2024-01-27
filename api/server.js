@@ -3239,6 +3239,78 @@ http.listen(port, function () {
 			});
 		});
 
+		app.post("/fetchUserWithNewsfeed", async function (request, result) {
+			const accessToken = request.fields.accessToken
+			const username = request.fields.username
+
+			const me = await database.collection("users").findOne({
+				accessToken: accessToken
+			})
+
+			if (me == null) {
+				result.json({
+					status: "error",
+					message: "User has been logged out."
+				})
+
+				return
+			}
+
+			const user = await database.collection("users").findOne({
+				$or: [{
+					username: username
+				}, {
+					_id: username
+				}]
+			})
+
+			if (user == null) {
+				result.json({
+					status: "error",
+					message: "User not found."
+				})
+
+				return
+			}
+
+			user.profileLocked = await functions.isProfileLocked(me, user)
+
+			const userObj = {
+				name: user.name,
+				profileLocked: (user.profileLocked == "yes")
+			}
+			let newsFeed = []
+
+			if (user.profileLocked == "no") {
+				userObj.email = user.email
+
+				userObj.dob = user.dob
+				userObj.city = user.city
+				userObj.country = user.country
+				userObj.aboutMe = user.aboutMe
+				userObj.coverPhoto = user.coverPhoto != "" ? (mainURL + "/" + user.coverPhoto) : user.coverPhoto
+				userObj.profileImage = user.profileImage != "" ? (mainURL + "/" + user.profileImage) : user.profileImage
+				userObj.friends = user.friends.length
+
+				newsFeed = await database.collection("posts")
+		            .find({
+		                "user._id": user._id
+		            })
+		            .sort({
+		                "createdAt": -1
+		            })
+		            .limit(5)
+		            .toArray()
+			}
+
+			result.json({
+				status: "success",
+				message: "Data has been fetched.",
+				user: userObj,
+				newsFeed: newsFeed
+			})
+		})
+
 		app.post("/fetchUser", async function (request, result) {
 			const accessToken = request.fields.accessToken
 			const username = request.fields.username
@@ -3246,6 +3318,15 @@ http.listen(port, function () {
 			const me = await database.collection("users").findOne({
 				accessToken: accessToken
 			})
+
+			if (me == null) {
+				result.json({
+					status: "error",
+					message: "User has been logged out."
+				})
+
+				return
+			}
 
 			const user = await database.collection("users").findOne({
 				$or: [{
@@ -3278,8 +3359,8 @@ http.listen(port, function () {
 				userObj.city = user.city
 				userObj.country = user.country
 				userObj.aboutMe = user.aboutMe
-				userObj.coverPhoto = user.coverPhoto
-				userObj.profileImage = user.profileImage
+				userObj.coverPhoto = user.coverPhoto != "" ? (mainURL + "/" + user.coverPhoto) : user.coverPhoto
+				userObj.profileImage = user.profileImage != "" ? (mainURL + "/" + user.profileImage) : user.profileImage
 				userObj.friends = user.friends.length
 			}
 
@@ -3650,6 +3731,38 @@ http.listen(port, function () {
 				}
 			});
 		});
+
+		app.post("/fetchPost", async function (request, result) {
+			const _id = request.fields._id ?? ""
+
+			if (!ObjectId.isValid(_id)) {
+				result.json({
+					status: "error",
+					message: "Invalid Object ID."
+				})
+				return
+			}
+
+			const post = await database.collection("posts")
+				.findOne({
+					_id: ObjectId(_id)
+				})
+
+			if (post == null) {
+				result.json({
+					status: "error",
+					message: "Post not found."
+				})
+				return
+			}
+
+			result.json({
+				status: "success",
+				message: "Post has been fetched.",
+				post: post
+			})
+			return
+		})
 
 		app.get("/post/:id", function (request, result) {
 			database.collection("posts").findOne({
@@ -4032,17 +4145,19 @@ http.listen(port, function () {
 				return
 			}
 
+			const obj = {
+				"_id": user._id,
+				"name": user.name,
+				"username": user.username,
+				"profileImage": user.profileImage,
+				"createdAt": new Date().getTime()
+			}
+
 			await database.collection("posts").updateOne({
 				"_id": ObjectId(_id)
 			}, {
 				$push: {
-					"dislikers": {
-						"_id": user._id,
-						"name": user.name,
-						"username": user.username,
-						"profileImage": user.profileImage,
-						"createdAt": new Date().getTime()
-					}
+					"dislikers": obj
 				}
 			})
 
@@ -4112,7 +4227,8 @@ http.listen(port, function () {
 
 			result.json({
 				"status": "success",
-				"message": "Post has been disliked."
+				"message": "Post has been disliked.",
+				obj: obj
 			})
 		})
 
@@ -4358,23 +4474,26 @@ http.listen(port, function () {
 				}
 			}
 
+			const obj = {
+				"_id": user._id,
+				"name": user.name,
+				"username": user.username,
+				"profileImage": user.profileImage,
+				"createdAt": new Date().getTime()
+			}
+
 			await database.collection("posts").updateOne({
 				"_id": ObjectId(_id)
 			}, {
 				$push: {
-					"likers": {
-						"_id": user._id,
-						"name": user.name,
-						"username": user.username,
-						"profileImage": user.profileImage,
-						"createdAt": new Date().getTime()
-					}
+					"likers": obj
 				}
 			})
 
 			result.json({
 				"status": "success",
-				"message": "Post has been liked."
+				"message": "Post has been liked.",
+				obj: obj
 			})
 		})
 
@@ -4477,6 +4596,12 @@ http.listen(port, function () {
 
 			let comments = post.comments
 			comments = comments.reverse()
+
+			for (const obj of comments) {
+				if (obj.user.profileImage != "") {
+					obj.user.profileImage = mainURL + "/" + obj.user.profileImage
+				}
+			}
 
 			result.json({
 				status: "success",
@@ -4735,6 +4860,12 @@ http.listen(port, function () {
 				post: updatePost,
 				comment: commentObj
 			})
+
+			for (const obj of updatePost.comments) {
+				if (obj.user.profileImage != "") {
+					obj.user.profileImage = mainURL + "/" + obj.user.profileImage
+				}
+			}
 
 			result.json({
 				"status": "success",
@@ -5389,7 +5520,8 @@ http.listen(port, function () {
                                 "_id": user._id,
                                 "name": user.name,
                                 "profileImage": user.profileImage
-                            }
+                            },
+                            createdAt: new Date().toUTCString()
                         }, function (error, data) {
 
                             result.json({
@@ -5423,7 +5555,8 @@ http.listen(port, function () {
 		                                    "_id": user._id,
 		                                    "name": user.name,
 		                                    "profileImage": user.profileImage
-		                                }
+		                                },
+		                                createdAt: new Date().toUTCString()
 		                            }, function (error, data) {
 
 		                                result.json({
@@ -6503,6 +6636,7 @@ http.listen(port, function () {
 		app.post("/sharePost", async function (request, result) {
 
 			var accessToken = request.fields.accessToken;
+			var caption = request.fields.caption ?? ""
 			var _id = request.fields._id;
 			var type = "shared";
 			var createdAt = new Date().getTime();
@@ -6557,7 +6691,7 @@ http.listen(port, function () {
 			})
 
 			await database.collection("posts").insertOne({
-				"caption": post.caption,
+				"caption": caption == "" ? post.caption : caption,
 				"image": post.image,
 				"video": post.video,
 				"savedPaths": post.savedPaths,
@@ -6571,6 +6705,7 @@ http.listen(port, function () {
 				"user": {
 					"_id": user._id,
 					"name": user.name,
+					"username": user.username,
 					"gender": user.gender,
 					"profileImage": user.profileImage
 				},
@@ -7170,7 +7305,7 @@ http.listen(port, function () {
 			})
 		})
 
-		app.post("/showPostDislikers", async function (request, result) {
+		app.post("/fetchPostDisLikers", async function (request, result) {
 			var accessToken = request.fields.accessToken
 			var _id = request.fields._id
 
@@ -7210,6 +7345,11 @@ http.listen(port, function () {
 			}
 
 			const dislikers = post.dislikers || []
+			for (const liker of dislikers) {
+				if (liker.profileImage != "") {
+					liker.profileImage = mainURL + "/" + liker.profileImage
+				}
+			}
 
 			result.json({
 				"status": "success",
@@ -7275,7 +7415,7 @@ http.listen(port, function () {
 			})
 		})
 
-		app.post("/showPostLikers", async function (request, result) {
+		app.post("/fetchPostLikers", async function (request, result) {
 			var accessToken = request.fields.accessToken
 			var _id = request.fields._id
 
@@ -7315,6 +7455,11 @@ http.listen(port, function () {
 			}
 
 			const likers = post.likers || []
+			for (const liker of likers) {
+				if (liker.profileImage != "") {
+					liker.profileImage = mainURL + "/" + liker.profileImage
+				}
+			}
 
 			result.json({
 				"status": "success",

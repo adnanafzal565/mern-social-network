@@ -46,7 +46,7 @@ function Header() {
 			})
 
 			localStorage.removeItem("accessToken")
-			navigate("/login.html")
+			navigate("/Login")
 		} else {
 			Swal.fire("Error", response.message, "error")
 		}
@@ -101,11 +101,11 @@ function Header() {
 					{ user == null ? (
 						<ul id="main-menu-mobile">
 							<li>
-								<Link to="/login.html">Login <i className="fa fa-angle-right"></i></Link>
+								<Link to="/Login">Login <i className="fa fa-angle-right"></i></Link>
 							</li>
 
 							<li>
-								<Link to="/signup.html">Signup <i className="fa fa-angle-right"></i></Link>
+								<Link to="/Signup">Signup <i className="fa fa-angle-right"></i></Link>
 							</li>
 						</ul>
 					) : (
@@ -132,33 +132,33 @@ function Header() {
 						{ user == null ? (
 							<>
 								<li>
-									<Link to="/login.html">Login <i className="fa fa-angle-right"></i></Link>
+									<Link to="/Login">Login <i className="fa fa-angle-right"></i></Link>
 								</li>
 
 								<li>
-									<Link to="/signup.html">Signup <i className="fa fa-angle-right"></i></Link>
+									<Link to="/Signup">Signup <i className="fa fa-angle-right"></i></Link>
 								</li>
 							</>
 						) : (
 							<>
 								<li>
-									<Link to="/ads.html">My Ads</Link>
+									<Link to="/Ads">My Ads</Link>
 								</li>
 
 								<li>
-									<Link to="/friends.html">Friends <i className="fa fa-angle-right"></i></Link>
+									<Link to="/Friends">Friends <i className="fa fa-angle-right"></i></Link>
 								</li>
 
 								<li>
-									<Link to="/pages.html">Pages <i className="fa fa-angle-right"></i></Link>
+									<Link to="/Pages">Pages <i className="fa fa-angle-right"></i></Link>
 								</li>
 
 								<li>
-									<Link to="/groups.html">Groups <i className="fa fa-angle-right"></i></Link>
+									<Link to="/Groups">Groups <i className="fa fa-angle-right"></i></Link>
 								</li>
 
 								<li>
-									<Link to="/update-profile.html">Profile ({user.name}) <i className="fa fa-angle-right"></i></Link>
+									<Link to="/UpdateProfile">Profile ({user.name}) <i className="fa fa-angle-right"></i></Link>
 								</li>
 
 								<li>
@@ -177,10 +177,14 @@ function Header() {
 								<i className="ti-search"></i>
 							</Link>
 							<div className="searched">
-								<input type="search" placeholder="Search Friend, Pages or Groups" onKeyPress={keypressInBox} />
-								<button data-ripple type="button" onClick={onSearch}>
-									<i className="ti-search"></i>
-								</button>
+								<form style={{
+									display: "block"
+								}} className="form-search">
+									<input type="search" placeholder="Search Friend, Pages or Groups" onKeyPress={keypressInBox} />
+									<button data-ripple type="button" onClick={onSearch}>
+										<i className="ti-search"></i>
+									</button>
+								</form>
 							</div>
 						</li>
 

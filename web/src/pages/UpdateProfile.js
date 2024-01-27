@@ -137,7 +137,7 @@ function UpdateProfile () {
 						Swal.fire("Delete account", response.message, "success")
 							.then(function () {
 								localStorage.removeItem("accessToken")
-								navigate("/login.html")
+								navigate("/Login")
 							})
 					} else {
 						Swal.fire("Error", response.message, "error")
@@ -310,7 +310,7 @@ function UpdateProfile () {
 														</form>
 
 														<p>
-															<Link to="/change-password.html">Change Password</Link>
+															<Link to="/ChangePassword">Change Password</Link>
 														</p>
 
 														<p>

@@ -43,7 +43,7 @@ function LoginPage () {
 		const response = await updateKeys(email, JSON.stringify(publicKeyJwk), JSON.stringify(privateKeyJwk))
 		if (response.status == "success") {
 			if (response.profileImage == "") {
-				navigate("/updateProfile")
+				navigate("/UpdateProfile")
 			} else {
 				navigate("/")
 			}
@@ -72,7 +72,7 @@ function LoginPage () {
 			if (response.hasKey) {
 				setLoading(false)
 				if (response.profileImage == "") {
-					navigate("/updateProfile")
+					navigate("/UpdateProfile")
 				} else {
 					navigate("/")
 				}
@@ -111,11 +111,11 @@ function LoginPage () {
 								</div>
 
 								<p>
-									<Link to="/signup">Don't have an account ?</Link>
+									<Link to="/Signup">Don't have an account ?</Link>
 								</p>
 
 								<p>
-									<Link to="/forgot-password">Forgot password ?</Link>
+									<Link to="/ForgotPassword">Forgot password ?</Link>
 								</p>
 
 								<div className="submit-btns">

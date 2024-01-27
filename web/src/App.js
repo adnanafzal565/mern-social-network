@@ -40,6 +40,18 @@ const ViewStory = lazy(function () {
   return import ("./pages/ViewStory")
 })
 
+const PostDetail = lazy(function () {
+  return import ("./pages/PostDetail")
+})
+
+const User = lazy(function () {
+  return import ("./pages/User")
+})
+
+const CreatePage = lazy(function () {
+  return import ("./pages/CreatePage")
+})
+
 function App() {
   return (
     <BrowserRouter>
@@ -50,13 +62,16 @@ function App() {
           <Suspense fallback={<h3>Loading....</h3>}>
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/about.html" element={<About />} />
-              <Route path="/login.html" element={<Login />} />
-              <Route path="/signup.html" element={<Signup />} />
-              <Route path="/update-profile.html" element={<UpdateProfile />} />
-              <Route path="/change-password.html" element={<ChangePassword />} />
-              <Route path="/add-story.html" element={<AddStory />} />
-              <Route path="/view-story.html" element={<ViewStory />} />
+              <Route path="/About" element={<About />} />
+              <Route path="/Login" element={<Login />} />
+              <Route path="/Signup" element={<Signup />} />
+              <Route path="/UpdateProfile" element={<UpdateProfile />} />
+              <Route path="/ChangePassword" element={<ChangePassword />} />
+              <Route path="/AddStory" element={<AddStory />} />
+              <Route path="/ViewStory" element={<ViewStory />} />
+              <Route path="/PostDetail" element={<PostDetail />} />
+              <Route path="/User" element={<User />} />
+              <Route path="/CreatePage" element={<CreatePage />} />
             </Routes>
           </Suspense>
 

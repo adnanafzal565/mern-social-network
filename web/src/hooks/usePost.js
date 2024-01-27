@@ -4,6 +4,104 @@ import constants from "../constants/constants"
 function usePost () {
 	const { api } = constants()
 
+	async function fetchPost (formData) {
+		try {
+			let response = await axios.post(
+				api + "/fetchPost",
+				formData
+			)
+			response = response.data
+
+			return response
+		} catch (exp) {
+			// 
+		}
+	}
+
+	async function sharePost (formData) {
+		try {
+			let response = await axios.post(
+				api + "/sharePost",
+				formData
+			)
+			response = response.data
+
+			return response
+		} catch (exp) {
+			// 
+		}
+	}
+
+	async function postComment (formData) {
+		try {
+			let response = await axios.post(
+				api + "/postComment",
+				formData
+			)
+			response = response.data
+
+			return response
+		} catch (exp) {
+			// 
+		}
+	}
+
+	async function fetchCommentsByPost (formData) {
+		try {
+			let response = await axios.post(
+				api + "/fetchCommentsByPost",
+				formData
+			)
+			response = response.data
+
+			return response
+		} catch (exp) {
+			// 
+		}
+	}
+
+	async function fetchPostDisLikers (formData) {
+		try {
+			let response = await axios.post(
+				api + "/fetchPostDisLikers",
+				formData
+			)
+			response = response.data
+
+			return response
+		} catch (exp) {
+			// 
+		}
+	}
+
+	async function toggleDislikePost (formData) {
+		try {
+			let response = await axios.post(
+				api + "/toggleDislikePost",
+				formData
+			)
+			response = response.data
+
+			return response
+		} catch (exp) {
+			// 
+		}
+	}
+
+	async function fetchPostLikers (formData) {
+		try {
+			let response = await axios.post(
+				api + "/fetchPostLikers",
+				formData
+			)
+			response = response.data
+
+			return response
+		} catch (exp) {
+			// 
+		}
+	}
+
 	async function toggleLikePost (formData) {
 		try {
 			let response = await axios.post(
@@ -46,7 +144,7 @@ function usePost () {
 		}
 	}
 
-	return { addPost, getNewsfeed }
+	return { fetchPost, sharePost, addPost, getNewsfeed, toggleLikePost, fetchPostLikers, toggleDislikePost, fetchPostDisLikers, fetchCommentsByPost, postComment }
 }
 
 export default usePost

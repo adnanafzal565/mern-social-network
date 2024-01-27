@@ -11,17 +11,17 @@ const LeftSidebar = function () {
 				<ul className="naves" id="left-sidebar">
 					<li>
 						<i className="ti-user"></i>
-						&nbsp;<Link to="/peopleNearby">People nearby</Link>
+						&nbsp;<Link to="/PeopleNearby">People nearby</Link>
 					</li>
 
 					<li>
 						<i className="ti-video-camera"></i>
-						&nbsp;<Link to="/watch">Watch</Link>
+						&nbsp;<Link to="/Watch">Watch</Link>
 					</li>
 
 					<li>
 						<i className="ti-user"></i>
-						&nbsp;<Link to="/friends">
+						&nbsp;<Link to="/Friends">
 							Friends
 							<span className="badge" id="friends-badge"></span>
 						</Link>
@@ -29,22 +29,22 @@ const LeftSidebar = function () {
 
 					<li>
 						<i className="ti-comments-smiley"></i>
-						&nbsp;<Link to="/inbox">Inbox <span className="badge" id="inbox-badge"></span></Link>
+						&nbsp;<Link to="/Inbox">Inbox <span className="badge" id="inbox-badge"></span></Link>
 					</li>
 
 					<li>
 						<i className="ti-files"></i>
-						&nbsp;<Link to="/createPage">Create page</Link>
+						&nbsp;<Link to="/CreatePage">Create page</Link>
 					</li>
 
 					<li>
 						<i className="ti-magnet"></i>
-						&nbsp;<Link to="/createGroup">Create group</Link>
+						&nbsp;<Link to="/CreateGroup">Create group</Link>
 					</li>
 
 					<li>
 						<i className="ti-bell"></i>
-						&nbsp;<Link to="/notifications">
+						&nbsp;<Link to="/Notifications">
 							Notifications
 							<span className="badge" id="notifications-badge"></span>
 						</Link>
@@ -52,7 +52,7 @@ const LeftSidebar = function () {
 
 					<li>
 						<i className="ti-calendar"></i>
-						&nbsp;<Link to="/events">Events <span className="badge" id="events-badge"></span></Link>
+						&nbsp;<Link to="/Events">Events <span className="badge" id="events-badge"></span></Link>
 					</li>
 				</ul>
 			</div>

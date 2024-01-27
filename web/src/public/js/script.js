@@ -1,6 +1,14 @@
 import jQuery from "jquery"
 import NProgress from "nprogress"
 
+function getDate (timestamp) {
+	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+	var createdAt = new Date(timestamp);
+	var date = createdAt.getDate() + "";
+	date = date.padStart(2, "0") + " " + months[createdAt.getMonth()] + ", " + createdAt.getFullYear();
+	return date
+}
+
 function urlify(text) {
 	var urlRegex = /(https?:\/\/[^\s]+)/g;
 	return text.replace(urlRegex, function(url) {
@@ -10,7 +18,7 @@ function urlify(text) {
 	// return text.replace(urlRegex, '<a href="$1">$1</a>')
 }
 
-export { urlify }
+export { urlify, getDate }
 
 function readMore(self) {
 	const parent = self.parentElement
@@ -51,7 +59,43 @@ function isAttachmentImage(attachment) {
     return extension && acceptedImageTypes.includes(extension);
 }
 
-export { isAttachmentImage }
+function isAttachmentVideo(attachment) {
+	const parts = attachment.split("/");
+	let filename = "";
+	if (parts.length > 0) {
+		filename = parts[parts.length - 1];
+	}
+
+	const filenameParts = filename.split(".");
+	let extension = "";
+	if (filenameParts.length > 0) {
+		extension = filenameParts[filenameParts.length - 1];
+	}
+	extension = extension.toLowerCase();
+
+    const acceptedImageTypes = ['mp4', "mov", 'mkv'];
+    return extension && acceptedImageTypes.includes(extension);
+}
+
+function isAttachmentAudio(attachment) {
+	const parts = attachment.split("/");
+	let filename = "";
+	if (parts.length > 0) {
+		filename = parts[parts.length - 1];
+	}
+
+	const filenameParts = filename.split(".");
+	let extension = "";
+	if (filenameParts.length > 0) {
+		extension = filenameParts[filenameParts.length - 1];
+	}
+	extension = extension.toLowerCase();
+
+    const acceptedImageTypes = ['mp3', "m4a", 'aac'];
+    return extension && acceptedImageTypes.includes(extension);
+}
+
+export { isAttachmentImage, isAttachmentVideo, isAttachmentAudio }
 
 function getTimePassed(timestamp) {
 	const currentTimestamp = new Date().getTime();
@@ -418,6 +462,12 @@ function editPostModal(self) {
 function closeModal(modalId) {
 	document.getElementById(modalId).style.display = "none";
 }
+
+function showModal(modalId) {
+	document.getElementById(modalId).style.display = "block";
+}
+
+export { closeModal, showModal }
 
 function onSearch(button) {
 	window.location.href = "/search/" + button.previousElementSibling.value;

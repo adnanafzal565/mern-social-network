@@ -79,7 +79,7 @@ function ViewStory() {
 		if (response.status == "success") {
 			// 
 		} else {
-			// swal("Error", response.message, "error");
+			// Swal.fire("Error", response.message, "error");
 		}
 	}
 

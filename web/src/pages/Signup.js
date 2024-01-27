@@ -25,7 +25,7 @@ function SignupPage () {
 		if (response.status == "success") {
 			Swal.fire("Success", response.message, "success")
 				.then(function () {
-					navigate("/login")
+					navigate("/Login")
 				})
 		} else {
 			Swal.fire("Error", response.message, "error")
@@ -83,7 +83,7 @@ function SignupPage () {
 									</div>
 								</div>
 
-								<Link to="/login">Already have an account</Link>
+								<Link to="/Login">Already have an account</Link>
 								
 								<div className="submit-btns">
 									<button className="mtr-btn signup" disabled={loading} name="submit" type="submit">
