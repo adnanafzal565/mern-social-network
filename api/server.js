@@ -5649,6 +5649,12 @@ http.listen(port, function () {
 				}]
 			}).toArray()
 
+			for (const d of data) {
+				if (d.coverPhoto != "") {
+					d.coverPhoto = mainURL + "/" + d.coverPhoto
+				}
+			}
+
 			result.json({
 				"status": "success",
 				"message": "Record has been fetched.",
@@ -5772,6 +5778,10 @@ http.listen(port, function () {
 			posts = posts.sort(function (a, b) {
 				return 0.5 - Math.random()
 			})
+
+			if (page.coverPhoto != "") {
+				page.coverPhoto = mainURL + "/" + page.coverPhoto
+			}
 
 			result.json({
 				status: "success",
@@ -5977,7 +5987,8 @@ http.listen(port, function () {
                                 "_id": user._id,
                                 "name": user.name,
                                 "profileImage": user.profileImage
-                            }
+                            },
+                            createdAt: new Date().toUTCString()
                         }, function (error, data) {
 
                             database.collection("users").updateOne({
@@ -6001,7 +6012,7 @@ http.listen(port, function () {
                         });
                     } else {
 
-    					if (request.files.coverPhoto.size > 0 && request.files.coverPhoto.type.includes("image")) {
+    					if (request.files?.coverPhoto.size > 0 && request.files?.coverPhoto.type.includes("image")) {
 
     						coverPhoto = "uploads/groups/" + new Date().getTime() + "-" + request.files.coverPhoto.name;
     						
@@ -6029,7 +6040,8 @@ http.listen(port, function () {
 		    								"_id": user._id,
 		    								"name": user.name,
 		    								"profileImage": user.profileImage
-		    							}
+		    							},
+		    							createdAt: new Date().toUTCString()
 		    						}, function (error, data) {
 
 		    							database.collection("users").updateOne({
@@ -6147,6 +6159,12 @@ http.listen(port, function () {
 					"members._id": user._id
 				}]
 			}).toArray()
+
+			for (const d of data) {
+				if (d.coverPhoto != "") {
+					d.coverPhoto = mainURL + "/" + d.coverPhoto
+				}
+			}
 
 			result.json({
 				"status": "success",
@@ -6279,6 +6297,20 @@ http.listen(port, function () {
 			posts = posts.sort(function (a, b) {
 				return 0.5 - Math.random()
 			})
+
+			if (group.coverPhoto != "") {
+				group.coverPhoto = mainURL + "/" + group.coverPhoto
+			}
+
+			for (const m of group.members) {
+				if (m.profileImage != "") {
+					m.profileImage = mainURL + "/" + m.profileImage
+				}
+			}
+
+			if (group.user.profileImage != "") {
+				group.user.profileImage = mainURL + "/" + group.user.profileImage
+			}
 
 			result.json({
 				"status": "success",
@@ -6676,17 +6708,19 @@ http.listen(port, function () {
 				return
 			}
 
+			const obj = {
+				"_id": user._id,
+				"name": user.name,
+				"username": user.username,
+				"profileImage": user.profileImage,
+				"createdAt": new Date().getTime()
+			}
+
 			await database.collection("posts").updateOne({
 				"_id": ObjectId(_id)
 			}, {
 				$push: {
-					"shares": {
-						"_id": user._id,
-						"name": user.name,
-						"username": user.username,
-						"profileImage": user.profileImage,
-						"createdAt": new Date().getTime()
-					}
+					"shares": obj
 				}
 			})
 
@@ -6801,7 +6835,8 @@ http.listen(port, function () {
 
 			result.json({
 				"status": "success",
-				"message": "Post has been shared."
+				"message": "Post has been shared.",
+				obj: obj
 			})
 		})
 
@@ -7468,7 +7503,7 @@ http.listen(port, function () {
 			})
 		})
 
-		app.post("/showPostSharers", async function (request, result) {
+		app.post("/fetchPostSharers", async function (request, result) {
 			var accessToken = request.fields.accessToken;
 			var _id = request.fields._id;
 
@@ -7504,10 +7539,17 @@ http.listen(port, function () {
 				return false;
 			}
 
+			const shares = post.shares
+			for (const s of shares) {
+				if (s.profileImage != "") {
+					s.profileImage = mainURL + "/" + s.profileImage
+				}
+			}
+
 			result.json({
 				"status": "success",
 				"message": "Data has been fetched.",
-				"data": post.shares
+				"data": shares
 			});
 		});
 

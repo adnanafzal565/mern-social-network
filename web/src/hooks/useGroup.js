@@ -1,13 +1,83 @@
 import axios from "axios"
 import constants from "../constants/constants"
 
-function usePage () {
-	const { api } = constants()
+const useGroup = {
+	api: constants().api,
 
-	async function deletePage (formData) {
+	async destroy(formData) {
 		try {
 			let response = await axios.post(
-				api + "/deletePage",
+				this.api + "/deleteGroup",
+				formData
+			)
+			response = response.data
+
+			return response
+		} catch (exp) {
+			// 
+		}
+	},
+
+	async update(formData) {
+		try {
+			let response = await axios.post(
+				this.api + "/editGroup",
+				formData
+			)
+			response = response.data
+
+			return response
+		} catch (exp) {
+			// 
+		}
+	},
+
+	async fetchSingle(formData) {
+		try {
+			let response = await axios.post(
+				this.api + "/getGroupDetail",
+				formData
+			)
+			response = response.data
+
+			return response
+		} catch (exp) {
+			// 
+		}
+	},
+
+	async toggleJoin(formData) {
+		try {
+			let response = await axios.post(
+				this.api + "/toggleJoinGroup",
+				formData
+			)
+			response = response.data
+
+			return response
+		} catch (exp) {
+			// 
+		}
+	},
+
+	async fetch(formData) {
+		try {
+			let response = await axios.post(
+				this.api + "/getGroups",
+				formData
+			)
+			response = response.data
+
+			return response
+		} catch (exp) {
+			// 
+		}
+	},
+
+	async create(formData) {
+		try {
+			let response = await axios.post(
+				this.api + "/createGroup",
 				formData
 			)
 			response = response.data
@@ -17,78 +87,6 @@ function usePage () {
 			// 
 		}
 	}
-
-	async function editPage (formData) {
-		try {
-			let response = await axios.post(
-				api + "/editPage",
-				formData
-			)
-			response = response.data
-
-			return response
-		} catch (exp) {
-			// 
-		}
-	}
-
-	async function toggleLikePage (formData) {
-		try {
-			let response = await axios.post(
-				api + "/toggleLikePage",
-				formData
-			)
-			response = response.data
-
-			return response
-		} catch (exp) {
-			// 
-		}
-	}
-
-	async function getPageDetail (formData) {
-		try {
-			let response = await axios.post(
-				api + "/getPageDetail",
-				formData
-			)
-			response = response.data
-
-			return response
-		} catch (exp) {
-			// 
-		}
-	}
-
-	async function getPages (formData) {
-		try {
-			let response = await axios.post(
-				api + "/getPages",
-				formData
-			)
-			response = response.data
-
-			return response
-		} catch (exp) {
-			// 
-		}
-	}
-	
-	async function createPage (formData) {
-		try {
-			let response = await axios.post(
-				api + "/createPage",
-				formData
-			)
-			response = response.data
-
-			return response
-		} catch (exp) {
-			// 
-		}
-	}
-
-	return { deletePage, editPage, toggleLikePage, getPageDetail, getPages, createPage }
 }
 
-export default usePage
+export default useGroup

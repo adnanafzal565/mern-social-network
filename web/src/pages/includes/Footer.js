@@ -22,6 +22,10 @@ function Footer() {
 		return state.postComments
 	})
 
+	const postSharers = useSelector(function (state) {
+		return state.postSharers
+	})
+
 	function deletePost() {
 		// 
 	}
@@ -102,19 +106,6 @@ function Footer() {
 				</div>
 			</div>
 
-			<div id="delete-post-modal" className="modal">
-				<div className="modal-content" style={{
-					width: 500
-				}}>
-					<h3>Delete <span className="close" onClick={function () {
-						closeModal('delete-post-modal')
-					}}>&times;</span></h3>
-					
-					<p>Are you sure you want to delete this post from Social Network ?</p>
-					<button type="button" className="btn btn-danger" onClick={deletePost}>Delete</button>
-				</div>
-			</div>
-
 			<div id="post-likers-modal" className="modal">
 				<div className="modal-content" style={{
 					width: 500
@@ -130,7 +121,9 @@ function Footer() {
 							}} key={`liker-${liker._id}`}>
 								<div className="col-md-2">
 									<figure>
-										<Link to={`/user/${liker.username}`}>
+										<Link to={`/user/${liker.username}`} onClick={function () {
+											closeModal("post-likers-modal")
+										}}>
 											<img src={liker.profileImage} />
 										</Link>
 									</figure>
@@ -138,7 +131,9 @@ function Footer() {
 
 								<div className="col-md-10 pepl-info">
 									<h4>
-										<Link to={`/user/${liker.username}`}>{liker.name}</Link>
+										<Link to={`/user/${liker.username}`} onClick={function () {
+											closeModal("post-likers-modal")
+										}}>{liker.name}</Link>
 									</h4>
 									<p>{getDate(liker.createdAt)}</p>
 								</div>
@@ -164,7 +159,6 @@ function Footer() {
 								<div className="col-md-2">
 									<figure>
 										<Link to={`/user/${liker.username}`} onClick={function () {
-											console.log("called")
 											closeModal("post-dislikers-modal")
 										}}>
 											<img src={liker.profileImage} />
@@ -174,7 +168,9 @@ function Footer() {
 
 								<div className="col-md-10 pepl-info">
 									<h4>
-										<Link to={`/user/${liker.username}`}>{liker.name}</Link>
+										<Link to={`/user/${liker.username}`} onClick={function () {
+											closeModal("post-dislikers-modal")
+										}}>{liker.name}</Link>
 									</h4>
 									<p>{getDate(liker.createdAt)}</p>
 								</div>
@@ -217,7 +213,9 @@ function Footer() {
 											borderRadius: 10
 										}}>
 											<div className="col-md-2">
-												<Link to={`/user/${comment.user._id}`}>
+												<Link to={`/user/${comment.user._id}`} onClick={function () {
+													closeModal("postCommentsModal")
+												}}>
 													<img className="profile-image" style={{
 														width: 50,
 														height: 50,
@@ -258,7 +256,9 @@ function Footer() {
 																marginTop: 20
 															}}>
 																<div className="col-md-2">
-																	<Link to={`/user/${reply.user._id}`}>
+																	<Link to={`/user/${reply.user._id}`} onClick={function () {
+																		closeModal("postCommentsModal")
+																	}}>
 																		<img className="profile-image" style={{
 																			width: 50,
 																			height: 50,
@@ -316,7 +316,40 @@ function Footer() {
 				<div className="modal-content" style={{
 					width: 500
 				}}>
+					<div className="modal-header">
+						<h5 className="modal-title">Post Shares</h5>
+						
+						<span className="close" onClick={function () {
+							closeModal("post-sharers-modal")
+						}}>&times;</span>
+					</div>
 
+					{ postSharers.map(function (user, index) {
+						return (
+							<div className="row" style={{
+								marginTop: 20
+							}} key={`post-sharer-${user._id}-${index}`}>
+								<div className="col-md-2">
+									<figure>
+										<Link to={`/user/${user.username}`} onClick={function () {
+											closeModal("post-sharers-modal")
+										}}>
+											<img src={user.profileImage} />
+										</Link>
+									</figure>
+								</div>
+
+								<div className="col-md-10 pepl-info">
+									<h4>
+										<Link to={`/user/${user.username}`} onClick={function () {
+											closeModal("post-sharers-modal")
+										}}>{user.name}</Link>
+									</h4>
+									<p>{getDate(user.createdAt)}</p>
+								</div>
+							</div>
+						)
+					}) }
 				</div>
 			</div>
 

@@ -52,6 +52,34 @@ const CreatePage = lazy(function () {
   return import ("./pages/CreatePage")
 })
 
+const Pages = lazy(function () {
+  return import ("./pages/Pages")
+})
+
+const Page = lazy(function () {
+  return import ("./pages/Page")
+})
+
+const EditPage = lazy(function () {
+  return import ("./pages/EditPage")
+})
+
+const CreateGroup = lazy(function () {
+  return import ("./pages/CreateGroup")
+})
+
+const Groups = lazy(function () {
+  return import ("./pages/Groups")
+})
+
+const Group = lazy(function () {
+  return import ("./pages/Group")
+})
+
+const EditGroup = lazy(function () {
+  return import ("./pages/EditGroup")
+})
+
 function App() {
   return (
     <BrowserRouter>
@@ -72,6 +100,13 @@ function App() {
               <Route path="/PostDetail" element={<PostDetail />} />
               <Route path="/User" element={<User />} />
               <Route path="/CreatePage" element={<CreatePage />} />
+              <Route path="/Pages" element={<Pages />} />
+              <Route path="/Page/:id" element={<Page />} />
+              <Route path="/EditPage/:id" element={<EditPage />} />
+              <Route path="/CreateGroup" element={<CreateGroup />} />
+              <Route path="/Groups" element={<Groups />} />
+              <Route path="/Group/:id" element={<Group />} />
+              <Route path="/EditGroup/:id" element={<EditGroup />} />
             </Routes>
           </Suspense>
 

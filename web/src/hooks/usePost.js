@@ -4,6 +4,34 @@ import constants from "../constants/constants"
 function usePost () {
 	const { api } = constants()
 
+	async function fetchPostSharers (formData) {
+		try {
+			let response = await axios.post(
+				api + "/fetchPostSharers",
+				formData
+			)
+			response = response.data
+
+			return response
+		} catch (exp) {
+			// 
+		}
+	}
+
+	async function deletePost (formData) {
+		try {
+			let response = await axios.post(
+				api + "/deletePost",
+				formData
+			)
+			response = response.data
+
+			return response
+		} catch (exp) {
+			// 
+		}
+	}
+
 	async function fetchPost (formData) {
 		try {
 			let response = await axios.post(
@@ -144,7 +172,7 @@ function usePost () {
 		}
 	}
 
-	return { fetchPost, sharePost, addPost, getNewsfeed, toggleLikePost, fetchPostLikers, toggleDislikePost, fetchPostDisLikers, fetchCommentsByPost, postComment }
+	return { fetchPostSharers, deletePost, fetchPost, sharePost, addPost, getNewsfeed, toggleLikePost, fetchPostLikers, toggleDislikePost, fetchPostDisLikers, fetchCommentsByPost, postComment }
 }
 
 export default usePost

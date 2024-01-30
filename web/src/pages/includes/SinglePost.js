@@ -7,7 +7,7 @@ import constants from "../../constants/constants"
 import { urlify, closeModal, showModal } from "../../public/js/script.js"
 import usePost from "../../hooks/usePost"
 
-function SinglePost({ data }) {
+function SinglePost({ data, onDelete = null }) {
 	const { api } = constants()
 	const [likers, setLikers] = useState(data.likers || [])
 	const [isLiked, setIsLiked] = useState(false)
@@ -15,6 +15,7 @@ function SinglePost({ data }) {
 	const [isDisliked, setIsDisliked] = useState(false)
 	const [comments, setComments] = useState(data.comments || [])
 	const [shares, setShares] = useState(data.shares || [])
+	const { fetchPostSharers, deletePost, toggleLikePost, fetchPostLikers, toggleDislikePost, fetchPostDisLikers, fetchCommentsByPost, sharePost } = usePost()
 	const dispatch = useDispatch()
 
 	const user = useSelector(function (state) {
@@ -93,7 +94,6 @@ function SinglePost({ data }) {
 		formData.append("accessToken", localStorage.getItem("accessToken"))
 		formData.append("_id", _id)
 		
-		const { toggleLikePost } = usePost()
 		const response = await toggleLikePost(formData)
 		if (response.status == "success") {
 			const obj = response.obj
@@ -120,7 +120,6 @@ function SinglePost({ data }) {
 		formData.append("accessToken", localStorage.getItem("accessToken"))
 		formData.append("_id", _id)
 		
-		const { fetchPostLikers } = usePost()
 		const response = await fetchPostLikers(formData)
 		if (response.status == "success") {
 			dispatch({
@@ -137,7 +136,6 @@ function SinglePost({ data }) {
 		formData.append("accessToken", localStorage.getItem("accessToken"))
 		formData.append("_id", _id)
 		
-		const { toggleDislikePost } = usePost()
 		const response = await toggleDislikePost(formData)
 		if (response.status == "success") {
 			const obj = response.obj
@@ -164,7 +162,6 @@ function SinglePost({ data }) {
 		formData.append("accessToken", localStorage.getItem("accessToken"))
 		formData.append("_id", _id)
 		
-		const { fetchPostDisLikers } = usePost()
 		const response = await fetchPostDisLikers(formData)
 		if (response.status == "success") {
 			dispatch({
@@ -183,7 +180,6 @@ function SinglePost({ data }) {
 		formData.append("accessToken", localStorage.getItem("accessToken"))
 		formData.append("_id", _id)
 		
-		const { fetchCommentsByPost } = usePost()
 		const response = await fetchCommentsByPost(formData)
 		if (response.status == "success") {
 			dispatch({
@@ -208,8 +204,6 @@ function SinglePost({ data }) {
 			confirmButtonText: "Share post",
 			showLoaderOnConfirm: true,
 			preConfirm: async function (caption) {
-				const { sharePost } = usePost()
-				
 				const formData = new FormData()
 				formData.append("accessToken", localStorage.getItem("accessToken"))
 				formData.append("_id", _id)
@@ -226,6 +220,10 @@ function SinglePost({ data }) {
 			if (result.isConfirmed) {
 				if (result.value.status == "success") {
 					Swal.fire("Share Post", result.value.message, "success")
+
+					const temp = [...shares]
+					temp.unshift(result.value.obj)
+					setShares(temp)
 				} else {
 					Swal.fire("Error", result.value.message, "error")
 				}
@@ -233,16 +231,52 @@ function SinglePost({ data }) {
 		})
 	}
 
-	async function onClickShareInPage (_id) {
+	function deletePostModal(_id) {
+		Swal.fire({
+			title: "Are you sure you want to delete this post ?",
+			showCancelButton: true,
+			confirmButtonText: "Delete"
+		}).then(async function (result) {
+			if (result.isConfirmed) {
+				const formData = new FormData()
+				formData.append("accessToken", localStorage.getItem("accessToken"))
+				formData.append("_id", _id)
+				const response = await deletePost(formData)
+				if (response.status == "success") {
+					if (onDelete != null) {
+						onDelete(_id)
+					}
+				} else {
+					Swal.fire("Error", response.message, "error")
+				}
+			}
+		})
+	}
+
+	/*async function onClickShareInPage (_id) {
 		//
 	}
 
 	async function onClickShareInGroup (_id) {
 		//
-	}
+	}*/
 
 	async function onClickShowPostShares (_id) {
-		//
+		showModal("post-sharers-modal")
+
+		const formData = new FormData()
+		formData.append("accessToken", localStorage.getItem("accessToken"))
+		formData.append("_id", _id)
+
+		const response = await fetchPostSharers(formData)
+		if (response.status == "success") {
+			dispatch({
+				type: "postSharers",
+				postSharers: response.data
+			})
+		} else {
+			Swal.fire("Error", response.message, "error")
+		}
 	}
 
 	return (

@@ -4,10 +4,18 @@ const initialState = {
 	user: null,
 	likers: [],
 	dislikers: [],
-	postComments: []
+	postComments: [],
+	postSharers: []
 }
 
 const reducer = function (state = initialState, action) {
+	if (action.type == "postSharers") {
+		return {
+			...state,
+			postSharers: action.postSharers
+		}
+	}
+
 	if (action.type == "updatePostComments") {
 		return {
 			...state,

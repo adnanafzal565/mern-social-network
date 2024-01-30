@@ -87,6 +87,17 @@ function HomePage() {
 		$("#modalYoutube").modal("show")
 	}
 
+	function onDeletePost(_id) {
+		const tempPosts = [...posts]
+		for (let a = tempPosts.length - 1; a >= 0; a--) {
+			if (tempPosts[a]._id == _id) {
+				tempPosts.splice(a, 1)
+				break
+			}
+		}
+		setPosts(tempPosts)
+	}
+
 	function loadMore () {
 		// 
 	}
@@ -213,6 +224,7 @@ function HomePage() {
 								{ posts.map(function (data, index) {
 									return (
 										<SinglePost data={data}
+											onDelete={onDeletePost}
 											key={`post-${data._id}`} />
 									)
 								}) }
