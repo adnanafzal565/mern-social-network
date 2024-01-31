@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 import Swal from "sweetalert2"
 
 import usePage from "../hooks/usePage"
@@ -18,6 +18,7 @@ function Page() {
 	const user = useSelector(function (state) {
 		return state.user
 	})
+	const dispatch = useDispatch()
 
 	async function onInit() {
 		const formData = new FormData()
@@ -57,9 +58,45 @@ function Page() {
 		if (response.status == "success") {
 			setHasLiked(true)
 			setTotalLikes(totalLikes + 1)
+
+			if (user != null) {
+	 			const tempPages = [...user.pages]
+				for (let a = tempPages.length - 1; a >= 0; a--) {
+					if (tempPages[a]._id == id) {
+						tempPages[a].likers.unshift(response.obj)
+						break
+					}
+				}
+				const tempUser = Object.assign({}, user)
+				tempUser.pages = tempPages
+				dispatch({
+					type: "updateUser",
+					user: tempUser
+				})
+			}
 		} else if (response.status == "unliked") {
 			setHasLiked(false)
 			setTotalLikes(totalLikes - 1)
+
+			if (user != null) {
+	 			const tempPages = [...user.pages]
+				for (let a = tempPages.length - 1; a >= 0; a--) {
+					if (tempPages[a]._id == id) {
+						for (let b = tempPages[a].likers.length - 1; b >= 0; b--) {
+							if (tempPages[a].likers[b]._id == user._id) {
+								tempPages[a].likers.splice(b, 1)
+								break
+							}
+						}
+					}
+				}
+				const tempUser = Object.assign({}, user)
+				tempUser.pages = tempPages
+				dispatch({
+					type: "updateUser",
+					user: tempUser
+				})
+			}
 		} else {
 			Swal.fire("Error", response.message, "error")
 		}
@@ -79,7 +116,23 @@ function Page() {
 
 				const response = await deletePage(formData)
 				if (response.status == "success") {
-					navigate("/Pages")
+					// navigate("/Pages")
+
+					if (user != null) {
+			 			const tempPages = [...user.pages]
+						for (let a = tempPages.length - 1; a >= 0; a--) {
+							if (tempPages[a]._id == id) {
+								tempPages.splice(a, 1)
+								break
+							}
+						}
+						const tempUser = Object.assign({}, user)
+						tempUser.pages = tempPages
+						dispatch({
+							type: "updateUser",
+							user: tempUser
+						})
+					}
 				} else {
 					Swal.fire("Error", response.message, "error")
 				}

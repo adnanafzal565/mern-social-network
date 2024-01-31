@@ -3414,6 +3414,18 @@ http.listen(port, function () {
 				"user._id": user._id
 			}).toArray()
 
+			for (const d of user.pages) {
+				if (d.coverPhoto != "") {
+					d.coverPhoto = mainURL + "/" + d.coverPhoto
+				}
+
+				for (const l of d.likers) {
+					if (l.profileImage != "") {
+						l.profileImage = mainURL + "/" + l.profileImage
+					}
+				}
+			}
+
 			let hasLocationExpired = true
 			if (typeof user.location !== "undefined") {
 				const currentTimestamp = new Date().setDate(new Date().getDate() + 1)
@@ -5860,17 +5872,24 @@ http.listen(port, function () {
 									});
 								});
 							} else {
+
+								const likerObj = {
+									"_id": user._id,
+									"name": user.name,
+									"profileImage": user.profileImage
+								}
+
 								database.collection("pages").updateOne({
 									"_id": ObjectId(_id)
 								}, {
 									$push: {
-										"likers": {
-											"_id": user._id,
-											"name": user.name,
-											"profileImage": user.profileImage
-										}
+										"likers": likerObj
 									}
 								}, function (error, data) {
+
+									if (likerObj.profileImage != "") {
+										likerObj.profileImage = mainURL + "/" + likerObj.profileImage
+									}
 
 									database.collection("users").updateOne({
 										"accessToken": accessToken
@@ -5885,7 +5904,8 @@ http.listen(port, function () {
 									}, function (error, data) {
 										result.json({
 											"status": "success",
-											"message": "Page has been liked."
+											"message": "Page has been liked.",
+											obj: likerObj
 										});
 									});
 								});

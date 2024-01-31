@@ -5,6 +5,7 @@ import Swal from "sweetalert2"
 
 import useUser from "../hooks/useUser"
 import SinglePost from "./includes/SinglePost"
+import RightSidebar from "./includes/RightSidebar"
 
 function User() {
 	const [id, setId] = useState("")
@@ -133,6 +134,10 @@ function User() {
 						                            	</p>
 						                            </div>
 					                            ) }
+					                        </div>
+
+					                        <div className="col-md-3">
+					                        	<RightSidebar />
 					                        </div>
 
 										</div>

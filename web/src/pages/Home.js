@@ -123,7 +123,7 @@ function HomePage() {
 									width: 200
 								}} />
 
-								<Link to="/add-story.html" className="btn btn-primary btn-sm" style={{
+								<Link to="/AddStory" className="btn btn-primary btn-sm" style={{
 									position: "absolute",
 									left: 118,
 									bottom: 5,
@@ -139,7 +139,7 @@ function HomePage() {
 										<div className="col-md-2" style={{
 											display: 'contents'
 										}} key={`story-${story._id}`}>
-											<Link to={`view-story.html?id=${story.user._id}`}>
+											<Link to={`/ViewStory?id=${story.user._id}`}>
 												<div className="story" style={{
 													marginRight: 10,
 													position: "relative"

@@ -4,6 +4,8 @@ This social network project is created in MERN stack (Mongo DB, Express JS, Reac
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+![Social Network in MERN stack](screenshot.png)
+
 ##
 ## For new project
 

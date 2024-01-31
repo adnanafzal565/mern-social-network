@@ -30,6 +30,7 @@ function Header() {
 	const user = useSelector(function (state) {
 		return state.user
 	})
+	const [search, setSearch] = useState("")
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 	const { doLogout } = useLogout()
@@ -73,7 +74,9 @@ function Header() {
 	}, [])
 
 	function onSearch() {
-		// 
+		event.preventDefault()
+		document.querySelector(".searched.active").className = "searched"
+		navigate("Search/" + search)
 	}
 
 	function keypressInBox() {
@@ -94,8 +97,11 @@ function Header() {
 					</span>
 				</div>
 				<div className="mh-head second">
-					<input type="search" placeholder="Search Friend, Pages or Groups" onKeyPress={keypressInBox} />
-					<Link to="/" onClick={onSearch} className="fa fa-search"></Link>
+					<input type="search" value={ search }
+						onChange={function () {
+							setSearch(event.target.value)
+						}}
+						placeholder="Search Users, Pages or Groups" />
 				</div>
 				<nav id="menu" className="res-menu">
 					{ user == null ? (
@@ -179,11 +185,15 @@ function Header() {
 							<div className="searched">
 								<form style={{
 									display: "block"
-								}} className="form-search">
-									<input type="search" placeholder="Search Friend, Pages or Groups" onKeyPress={keypressInBox} />
-									<button data-ripple type="button" onClick={onSearch}>
-										<i className="ti-search"></i>
-									</button>
+								}}
+									className="form-search"
+									onSubmit={ onSearch }>
+									<input type="search"
+										value={ search }
+										onChange={function () {
+											setSearch(event.target.value)
+										}}
+										placeholder="Search Users, Pages or Groups" />
 								</form>
 							</div>
 						</li>
