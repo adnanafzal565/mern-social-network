@@ -5505,8 +5505,6 @@ http.listen(port, function () {
 		        }
 	        }
 
-	        console.log(files)
-
 	        functions.callbackFileUpload(files, 0, [], async function (savedPaths) {
 	        	messageObj.savedPaths = savedPaths
 	        	

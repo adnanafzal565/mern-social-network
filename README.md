@@ -1,4 +1,4 @@
-# Social Network in MERN Stack
+# <img src="react.png" width="50" height="50" /> Social Network in MERN Stack
 
 This social network project is created in MERN stack (Mongo DB, Express JS, React JS, Node JS).
 
