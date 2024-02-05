@@ -77,7 +77,9 @@ function Footer() {
 			<footer>
 				<div className="container">
 					<div className="row">
-						Social network &copy; {year}
+						<div className="col-12 text-center">
+							Social Network &copy; { year }. Developed by <a href="https://adnan-tech.com/" target="_blank">Adnan Afzal</a>
+						</div>
 					</div>
 				</div>
 			</footer>

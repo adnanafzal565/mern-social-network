@@ -18,7 +18,6 @@ var nodemailer = require("nodemailer");
 var requestModule = require('request');
 
 var functions = require("./modules/functions");
-var chat = require("./modules/chat");
 var page = require("./modules/page");
 var group = require("./modules/group");
 var addPost = require("./modules/add-post");
@@ -35,9 +34,6 @@ const filter = new Filter();
 
 const cron = require("node-cron");
 const moment = require('moment-timezone')
-
-var admin = require("./modules/admin");
-admin.init(app, express);
 
 app.use("/voice-notes", express.static(__dirname + "/voice-notes"))
 app.use("/public", express.static(__dirname + "/public"))
@@ -116,14 +112,6 @@ http.listen(port, function () {
 		functions.database = database;
 		functions.fileSystem = fileSystem;
 
-		chat.database = database;
-		chat.socketIO = socketIO;
-		chat.users = users;
-		chat.ObjectId = ObjectId;
-		chat.fileSystem = fileSystem;
-		chat.cryptr = cryptr;
-		chat.filter = filter;
-
 		page.database = database;
 		page.ObjectId = ObjectId;
 		page.fileSystem = fileSystem;
@@ -146,13 +134,6 @@ http.listen(port, function () {
 		editPost.requestModule = requestModule;
 		editPost.filter = filter;
 		editPost.ObjectId = ObjectId;
-
-		admin.database = database;
-		admin.bcrypt = bcrypt;
-		admin.jwt = jwt;
-		admin.ObjectId = ObjectId;
-		admin.fileSystem = fileSystem;
-		admin.mainURL = mainURL;
 
 		cron.schedule("* * * * *", async function () {
 			let stories = await database.collection("stories").aggregate([{
@@ -1831,7 +1812,7 @@ http.listen(port, function () {
 			})
 		})
 
-		app.post("/boostPost", async function (request, result) {
+		app.post("/fetchPostForBoost", async function (request, result) {
 			const _id = request.fields._id
 			const accessToken = request.fields.accessToken
 
@@ -1902,10 +1883,10 @@ http.listen(port, function () {
 					youtube_url: post.youtube_url,
 					type: post.type,
 					createdAt: post.createdAt,
-					likers: post.likers.length,
-					dislikers: post.dislikers.length,
-					comments: post.comments.length,
-					shares: post.shares.length
+					likers: post.likers?.length || [],
+					dislikers: post.dislikers?.length || [],
+					comments: post.comments?.length || [],
+					shares: post.shares?.length || []
 				}
 			})
 		})
@@ -5014,6 +4995,19 @@ http.listen(port, function () {
 				}]
 			}).toArray()
 
+			const usersData = []
+			for (const u of users) {
+				if (u.profileImage != "") {
+					u.profileImage = mainURL + "/" + u.profileImage
+				}
+				usersData.push({
+					_id: u._id,
+					profileImage: u.profileImage,
+					username: u.username,
+					name: u.name
+				})
+			}
+
 			const pages = await database.collection("pages").find({
 				"name": {
 					$regex: ".*" + query + ".*",
@@ -5021,12 +5015,38 @@ http.listen(port, function () {
 				}
 			}).toArray()
 
+			const pagesData = []
+			for (const p of pages) {
+				if (p.coverPhoto != "") {
+					p.coverPhoto = mainURL + "/" + p.coverPhoto
+				}
+				pagesData.push({
+					_id: p._id,
+					coverPhoto: p.coverPhoto,
+					name: p.name,
+					likers: p.likers || []
+				})
+			}
+
 			const groups = await database.collection("groups").find({
 				"name": {
 					$regex: ".*" + query + ".*",
 					$options: "i"
 				}
 			}).toArray()
+
+			const groupsData = []
+			for (const g of groups) {
+				if (g.coverPhoto != "") {
+					g.coverPhoto = mainURL + "/" + g.coverPhoto
+				}
+				groupsData.push({
+					_id: g._id,
+					coverPhoto: g.coverPhoto,
+					name: g.name,
+					members: g.members || []
+				})
+			}
 
 			const events = await database.collection("events").find({
 				"name": {
@@ -5037,13 +5057,26 @@ http.listen(port, function () {
 				"eventDate": -1
 			}).toArray()
 
+			const eventsData = []
+			for (const e of events) {
+				if (e.image != "") {
+					e.image = mainURL + "/" + e.image
+				}
+				eventsData.push({
+					_id: e._id,
+					image: e.image,
+					name: e.name,
+					going: e.going
+				})
+			}
+
 			result.json({
 				status: "success",
 				message: "Record has been fetched",
-				users: users,
-				pages: pages,
-				groups: groups,
-				events: events
+				users: usersData,
+				pages: pagesData,
+				groups: groupsData,
+				events: eventsData
 			})
 		})
 
@@ -5118,25 +5151,28 @@ http.listen(port, function () {
                                         }
                                     }, function (error, data) {
 
+                                    	const friendObj = {
+                                            "_id": user._id,
+                                            "name": user.name,
+                                            "username": user.username,
+                                            "profileImage": user.profileImage,
+                                            "status": "Pending",
+                                            "sentByMe": true,
+                                            "inbox": []
+                                        }
+
                                         database.collection("users").updateOne({
                                             "_id": me._id
                                         }, {
                                             $push: {
-                                                "friends": {
-                                                    "_id": user._id,
-                                                    "name": user.name,
-                                                    "username": user.username,
-                                                    "profileImage": user.profileImage,
-                                                    "status": "Pending",
-                                                    "sentByMe": true,
-                                                    "inbox": []
-                                                }
+                                                "friends": friendObj
                                             }
                                         }, function (error, data) {
 
                                             result.json({
                                                 "status": "success",
-                                                "message": "Friend request has been sent."
+                                                "message": "Friend request has been sent.",
+                                                friend: friendObj
                                             });
 
                                         });
@@ -5327,9 +5363,77 @@ http.listen(port, function () {
 			result.render("inbox-new")
 		})
 
-		app.post("/sendVoiceNote", function (request, result) {
-			chat.sendVoiceNote(request, result)
-		})
+		app.post("/getFriendsChat", async function (request, result) {
+			var accessToken = request.fields.accessToken;
+	        var _id = request.fields._id;
+
+	        var me = await database.collection("users").findOne({
+	            "accessToken": accessToken
+	        });
+
+	        if (me == null) {
+	            result.json({
+	                "status": "error",
+	                "message": "User has been logged out. Please login again."
+	            });
+
+	            return false;
+	        }
+
+	        if (me.isBanned) {
+	            result.json({
+	                "status": "error",
+	                "message": "You have been banned."
+	            });
+	            return false;
+	        }
+
+	        const user = await database.collection("users").findOne({
+	            _id: ObjectId(_id)
+	        })
+
+	        if (user == null) {
+	            result.json({
+	                "status": "error",
+	                "message": "User does not exists."
+	            })
+
+	            return
+	        }
+
+	        var index = me.friends.findIndex(function(friend) {
+	            return friend._id == _id
+	        });
+	        var inbox = me.friends[index].inbox;
+
+	        // updating logged in user's record
+	        await database.collection("users").updateOne({
+	            $and: [{
+	                "accessToken": accessToken
+	            }, {
+	                "friends._id": user._id
+	            }]
+	        }, {
+	            $set: {
+	                "friends.$.inbox.$[].is_read": true,
+	                "friends.$.unread": 0
+	            }
+	        });
+
+	        for (var a = 0; a < inbox.length; a++) {
+	            if (inbox[a].message != null) {
+	                // inbox[a].message = this.cryptr.decrypt(inbox[a].message)
+	            }
+	        }
+
+	        result.json({
+	            "status": "success",
+	            "message": "Record has been fetched",
+	            "data": inbox,
+	            privateKey: JSON.parse(me.privateKey),
+	            publicKey: JSON.parse(user.publicKey)
+	        });
+		});
 
 		app.post("/sendMessage", async function (request, result) {
 			// chat.sendMessage(request, result)
@@ -5391,11 +5495,17 @@ http.listen(port, function () {
 	        const files = []
 	        if (Array.isArray(request.files.files)) {
 	            for (let a = 0; a < request.files.files.length; a++) {
-	                files.push(request.files.files[a])
+	            	if (request.files.files[a].size > 0) {
+		                files.push(request.files.files[a])
+		            }
 	            }
 	        } else {
-	            files.push(request.files.files)
+	        	if (request.files.files.size > 0) {
+		            files.push(request.files.files)
+		        }
 	        }
+
+	        console.log(files)
 
 	        functions.callbackFileUpload(files, 0, [], async function (savedPaths) {
 	        	messageObj.savedPaths = savedPaths
@@ -5441,14 +5551,6 @@ http.listen(port, function () {
 		        })
 	        })
 		})
-
-		app.post("/deleteMessage", function (request, result) {
-			chat.deleteMessage(request, result);
-		});
-
-		app.post("/getFriendsChat", function (request, result) {
-			chat.getFriendsChat(request, result);
-		});
 
 		app.post("/connectSocket", function (request, result) {
 			var accessToken = request.fields.accessToken;
@@ -6407,16 +6509,17 @@ http.listen(port, function () {
 											});
 									});
 							} else {
+								const obj = {
+									"_id": user._id,
+									"name": user.name,
+									"profileImage": user.profileImage,
+									"status": "Pending"
+								}
 								database.collection("groups").updateOne({
 									"_id": ObjectId(_id)
 								}, {
 									$push: {
-										"members": {
-											"_id": user._id,
-											"name": user.name,
-											"profileImage": user.profileImage,
-											"status": "Pending"
-										}
+										"members": obj
 									}
 								}, function (error, data) {
 
@@ -6453,7 +6556,8 @@ http.listen(port, function () {
 
 										result.json({
 											"status": "success",
-											"message": "Request to join group has been sent."
+											"message": "Request to join group has been sent.",
+											obj: obj
 										});
 									});
 								});

@@ -25,7 +25,7 @@ function SinglePost({ data, onDelete = null }) {
 	useEffect(function () {
 		for (var b = 0; b < likers.length; b++) {
 			var liker = likers[b];
-			if (liker._id == user._id) {
+			if (liker._id == user?._id) {
 				setIsLiked(true)
 				break;
 			}
@@ -33,7 +33,7 @@ function SinglePost({ data, onDelete = null }) {
 
 		for (var b = 0; b < dislikers.length; b++) {
 			var disliker = dislikers[b];
-			if (disliker._id == user._id) {
+			if (disliker._id == user?._id) {
 				setIsDisliked(true);
 				break;
 			}
@@ -80,10 +80,10 @@ function SinglePost({ data, onDelete = null }) {
 
 	function isMyUploaded (data) {
 		if (data.type == "group_post") {
-			if (data.uploader._id == user._id) {
+			if (data.uploader._id == user?._id) {
 				return true
 			}
-		} else if (data.user._id == user._id) {
+		} else if (data.user?._id == user?._id) {
 			return true
 		}
 		return false
@@ -293,34 +293,38 @@ function SinglePost({ data, onDelete = null }) {
 							) }
 
 							<figure>
-								<img src={`${api}/${(data.type == "group_post" ? data.uploader.profileImage : data.user.profileImage)}`}
+								<img src={`${api}/${(data.type == "group_post" ? data.uploader?.profileImage : data.user?.profileImage)}`}
 									style={{
 										width: 45,
 										height: 45,
 										objectFit: "cover"
 									}}
 									onError={function (event) {
-										event.target.src = defaultProfileImage
+										event.target.src = require("../../public/img/default_profile.jpg")
 									}} />
 							</figure>
 
 							<div className="friend-name">
 								<ins>
-									{ (data.type == "post" || data.type == "shared") ? (
-										<Link to={`/User?user=${data.user.username}`}>
-											{ data.user.name }
-										</Link>
-									) : data.type == "group_post" ? (
-										<Link to={`/Group/${data.user._id}`}>
-											{ data.user.name }
-										</Link>
-									) : data.type == "page_post" ? (
-										<Link to={`/Page/${data.user._id}`}>
-											{ data.user.name }
-										</Link>
-									) : (
-										<span>{ data.user.name }</span>
-									)}
+									{ data.user != null && (
+										<>
+											{ (data.type == "post" || data.type == "shared") ? (
+												<Link to={`/User/${data.user.username}`}>
+													{ data.user.name }
+												</Link>
+											) : data.type == "group_post" ? (
+												<Link to={`/Group/${data.user._id}`}>
+													{ data.user.name }
+												</Link>
+											) : data.type == "page_post" ? (
+												<Link to={`/Page/${data.user._id}`}>
+													{ data.user.name }
+												</Link>
+											) : (
+												<span>{ data.user.name }</span>
+											)}
+										</>
+									) }
 
 									{ isMyUploaded(data) && (
 										<>
@@ -334,7 +338,7 @@ function SinglePost({ data, onDelete = null }) {
 										</>
 									) }
 
-									<Link to={`/PostDetail?id=${data._id}`} className="detail-post"
+									<Link to={`/PostDetail/${data._id}`} className="detail-post"
 										style={{
 											position: "relative",
 											bottom: 5
@@ -348,9 +352,9 @@ function SinglePost({ data, onDelete = null }) {
 								
 								{ data.originalPost != null && (
 									<span>
-										Original <Link to={`/PostDetail?id=${data.originalPost._id}`}>post</Link>
+										Original <Link to={`/PostDetail/${data.originalPost._id}`}>post</Link>
 										&nbsp;by&nbsp;
-										<Link to={`/User?user=${data.originalPost.user.username}`}>{ data.originalPost.user.name }</Link>
+										<Link to={`/User/${data.originalPost.user.username}`}>{ data.originalPost.user.name }</Link>
 									</span>
 								) }
 
@@ -526,7 +530,7 @@ function SinglePost({ data, onDelete = null }) {
 											padding: 5
 										}} className='pull-right'>Boost post</a>
 									) : (
-										<Link to={`/Boost?id=${data._id}`} style={{
+										<Link to={`/Boost/${data._id}`} style={{
 											backgroundColor: "#088dcd",
 											color: "white",
 											padding: 5

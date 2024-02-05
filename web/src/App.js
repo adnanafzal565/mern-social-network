@@ -80,6 +80,26 @@ const EditGroup = lazy(function () {
   return import ("./pages/EditGroup")
 })
 
+const Boost = lazy(function () {
+  return import ("./pages/Boost")
+})
+
+const Ads = lazy(function () {
+  return import ("./pages/Ads")
+})
+
+const Search = lazy(function () {
+  return import ("./pages/Search")
+})
+
+const Friends = lazy(function () {
+  return import ("./pages/Friends")
+})
+
+const Inbox = lazy(function () {
+  return import ("./pages/Inbox")
+})
+
 function App() {
   return (
     <BrowserRouter>
@@ -97,8 +117,8 @@ function App() {
               <Route path="/ChangePassword" element={<ChangePassword />} />
               <Route path="/AddStory" element={<AddStory />} />
               <Route path="/ViewStory" element={<ViewStory />} />
-              <Route path="/PostDetail" element={<PostDetail />} />
-              <Route path="/User" element={<User />} />
+              <Route path="/PostDetail/:id" element={<PostDetail />} />
+              <Route path="/User/:id" element={<User />} />
               <Route path="/CreatePage" element={<CreatePage />} />
               <Route path="/Pages" element={<Pages />} />
               <Route path="/Page/:id" element={<Page />} />
@@ -107,6 +127,11 @@ function App() {
               <Route path="/Groups" element={<Groups />} />
               <Route path="/Group/:id" element={<Group />} />
               <Route path="/EditGroup/:id" element={<EditGroup />} />
+              <Route path="/Boost/:id" element={<Boost />} />
+              <Route path="/Ads" element={<Ads />} />
+              <Route path="/Search/:query" element={<Search />} />
+              <Route path="/Friends" element={<Friends />} />
+              <Route path="/Inbox" element={<Inbox />} />
             </Routes>
           </Suspense>
 

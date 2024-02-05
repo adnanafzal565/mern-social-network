@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { Link } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import NProgress from "nprogress"
 import Swal from "sweetalert2"
 
@@ -8,14 +8,15 @@ import SinglePost from "./includes/SinglePost"
 import RightSidebar from "./includes/RightSidebar"
 
 function User() {
-	const [id, setId] = useState("")
+	// const [id, setId] = useState("")
+	const { id } = useParams()
 	const [u, setU] = useState(null)
 	const [newsFeed, setNewsFeed] = useState([])
 
 	async function onInit() {
-		const urlSearchParams = new URLSearchParams(window.location.search)
-		const id = urlSearchParams.get("user") || ""
-		setId(id)
+		// const urlSearchParams = new URLSearchParams(window.location.search)
+		// const id = urlSearchParams.get("user") || ""
+		// setId(id)
 		NProgress.start()
 
 		const formData = new FormData()
@@ -52,7 +53,10 @@ function User() {
 									width: "100%",
 									height: 700,
 									objectFit: "cover"
-								}} src={ u.coverPhoto } />
+								}} src={ u.coverPhoto }
+									onError={function () {
+										event.target.src = require("../public/img/default_cover.jpg")
+									}} />
 							</figure>
 
 							<div className="container-fluid">
@@ -64,7 +68,11 @@ function User() {
 													width: "100%",
 													height: 150,
 													objectFit: "cover"
-												}} src={ u.profileImage } />
+												}} 
+													src={ u.profileImage }
+													onError={function () {
+														event.target.src = require("../public/img/default_profile.jpg")
+													}} />
 											</figure>
 										</div>
 									</div>

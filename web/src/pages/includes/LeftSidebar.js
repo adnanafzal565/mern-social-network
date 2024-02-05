@@ -1,6 +1,26 @@
 import { Link } from "react-router-dom"
+import { useSelector } from "react-redux"
+import { useState, useEffect } from "react"
 
 const LeftSidebar = function () {
+	const user = useSelector(function (state) {
+		return state.user
+	})
+	const [friendsCount, setFriendsCount] = useState(0)
+
+	useEffect(function () {
+		if (user != null) {
+			var tempFriendsCount = 0;
+			for (var a = 0; a < user.friends.length; a++) {
+				if (user.friends[a].status == "Pending"
+					&& !user.friends[a].sentByMe) {
+					tempFriendsCount++
+				}
+			}
+			setFriendsCount(tempFriendsCount)
+		}
+	}, [user])
+
 	return (
 		<aside className="sidebar" style={{
 			position: "sticky !important",
@@ -23,7 +43,9 @@ const LeftSidebar = function () {
 						<i className="ti-user"></i>
 						&nbsp;<Link to="/Friends">
 							Friends
-							<span className="badge" id="friends-badge"></span>
+							{ friendsCount > 0 && (
+								<span className="badge" id="friends-badge">({ friendsCount })</span>
+							) }
 						</Link>
 					</li>
 

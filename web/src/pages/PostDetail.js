@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import NProgress from "nprogress"
 import Swal from "sweetalert2"
 
@@ -9,14 +9,13 @@ import RightSidebar from "./includes/RightSidebar"
 import SinglePost from "./includes/SinglePost"
 
 function PostDetail() {
-	const [id, setId] = useState("")
+	const { id } = useParams()
 	const [post, setPost] = useState(null)
 	const navigate = useNavigate()
 
 	async function onInit() {
-		const urlSearchParams = new URLSearchParams(window.location.search)
-		const id = urlSearchParams.get("id") || ""
-		setId(id)
+		// const urlSearchParams = new URLSearchParams(window.location.search)
+		// const id = urlSearchParams.get("id") || ""
 		NProgress.start()
 
 		const formData = new FormData()
